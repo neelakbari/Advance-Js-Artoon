@@ -1,16 +1,97 @@
-*, *::after, *::before {
+* {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgb(24, 26, 27);
 }
 
 .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   max-width: 1320px;
   padding: 0px 15px;
+  min-height: 100vh;
+  width: 100vw;
+}
+.container h1 {
+  color: aliceblue;
+}
+
+.inputSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.8rem;
+  background: #000000;
+  gap: 0.5rem;
+  border-radius: 10px;
+}
+.inputSection #taskInput {
+  background: rgb(59, 59, 59);
+  padding: 0.6rem 0.3rem;
+  border-radius: 8px;
+  outline: none;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+}
+.inputSection #taskInput::-moz-placeholder {
+  color: white;
+}
+.inputSection #taskInput::placeholder {
+  color: white;
+}
+.inputSection button {
+  padding: 0.6rem 0.3rem;
+  border-radius: 10px;
+  background-color: rgb(59, 59, 59);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  font-size: 1.2rem;
+}
+.inputSection button:hover {
+  background: rgb(145, 142, 142);
+}
+
+#taskList {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 2rem;
+}
+#taskList .tasks {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+#taskList .tasks img {
+  height: 250px;
+  width: 250px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  cursor: pointer;
+}
+#taskList .tasks .taskTitle {
+  color: white;
+  font-size: 2rem;
+  padding: 0.5rem;
+}
+#taskList .tasks .deleteButton {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  cursor: pointer;
+  padding: 0rem 0.5rem;
+  background: red;
+  border-radius: 50%;
+  color: white;
+  font-size: 2rem;
 }
