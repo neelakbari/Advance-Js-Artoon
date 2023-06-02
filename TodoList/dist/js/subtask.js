@@ -43,7 +43,9 @@ function createSubTask(subTaskId, subTaskName) {
   microTaskTitle.textContent = subTaskName;
 
   const microTaskInput = document.createElement("input");
-  microTaskInput.addEventListener("blur",()=>{addMicroTask(subTaskId)})
+  microTaskInput.addEventListener("blur", () => {
+    addMicroTask(subTaskId);
+  });
   // microTaskInput.setAttribute("value","asdas");
   // microTaskInput.setAttribute("id","microTaskInput");
 
@@ -66,21 +68,21 @@ function createSubTask(subTaskId, subTaskName) {
 }
 
 //delete subTask
-function deleteTask(event){
-    const microTaskDiv = event.target.parentElement;
-    const subTaskId = microTaskDiv.dataset.subTaskId
-    console.log(subTaskId)
-    microTaskDiv.remove();
+function deleteTask(event) {
+  const microTaskDiv = event.target.parentElement;
+  const subTaskId = microTaskDiv.dataset.subTaskId;
+  console.log(subTaskId);
+  microTaskDiv.remove();
 
-    //remove it from local storage
-    removeSubTaskFromLocalStorage(subTaskId)
+  //remove it from local storage
+  removeSubTaskFromLocalStorage(subTaskId);
 }
 //remove it from local Storage
 
-function removeSubTaskFromLocalStorage(id){
+function removeSubTaskFromLocalStorage(id) {
   const subTasks = Array.from(JSON.parse(localStorage.getItem(selectedTaskId)));
-let updatedSubTasks = subTasks.filter(res=>res.id !==id)
-localStorage.setItem(selectedTaskId, JSON.stringify(updatedSubTasks));
+  let updatedSubTasks = subTasks.filter((res) => res.id !== id);
+  localStorage.setItem(selectedTaskId, JSON.stringify(updatedSubTasks));
 }
 
 // Save the subtask list to local storage
@@ -104,21 +106,62 @@ function loadSubtasksFromLocalStorage() {
   });
 }
 
-
-//micro Tasks List 
+//micro Tasks List
 
 //addMicroTask
-function addMicroTask (uniqueValue){
- const microTaskInput = document.querySelector(`.microTaskContainer[data-sub-task-id="${uniqueValue}"] input`);
- const microTaskName = microTaskInput.value
- if (microTaskName.trim() !== "") {
-  const microTaskList = microTaskInput.nextElementSibling;
-  const microTaskItem = document.createElement('li');
-  microTaskItem.classList.add('microTaskItem')
-  microTaskItem.textContent = microTaskName;
-  microTaskList.appendChild(microTaskItem)
-  // console.log(microTaskList)
+function addMicroTask(uniqueValue) {
+  const microTaskInput = document.querySelector(
+    `.microTaskContainer[data-sub-task-id="${uniqueValue}"] input`
+  );
+  const microTaskName = microTaskInput.value;
+  if (microTaskName.trim() !== "") {
+    const microTaskList = microTaskInput.nextElementSibling;
+    const microTaskItem = document.createElement("li");
+    microTaskItem.classList.add("microTaskItem");
+    microTaskItem.textContent = microTaskName;
+    iconHTML(microTaskItem);
+    microTaskList.appendChild(microTaskItem);
+    // console.log(microTaskList)
+    //select the icon and add event listner to that
+    const completed = Array.from(document.querySelectorAll("span.tickIcon"));
+completed.forEach((task) => {
+      task.addEventListener("click",done)
+    });
 
-   microTaskInput.value = ""
- }
+    const deleteMicro = Array.from(document.querySelectorAll("span.crossIcon"));
+    deleteMicro.forEach((task) => {
+      task.addEventListener("click",deleteMicroTask)
+    });
+
+    microTaskInput.value = "";
+  }
+}
+
+//add Icon HTML
+function iconHTML(parent) {
+  const iconWrapper = document.createElement("div");
+  iconWrapper.classList.add("iconWrapper");
+  const tick = document.createElement("span");
+  tick.classList.add("tickIcon");
+  tick.innerHTML = "&#x2713";
+  iconWrapper.append(tick);
+
+  const cross = document.createElement("span");
+  cross.classList.add("crossIcon");
+  cross.innerHTML = "&#x2715";
+  iconWrapper.append(cross);
+  parent.append(iconWrapper);
+}
+
+//Complete task
+function done(event) {
+  console.log(event)
+  let li = event.target.parentElement.parentElement;
+        (li.classList.contains("done"))?(li.classList.remove("done")):(li.classList.add("done"))
+}
+
+//delete deleteMicroTask
+function deleteMicroTask(event){
+  let li = event.target.parentElement.parentElement;
+  li.remove();
 }
