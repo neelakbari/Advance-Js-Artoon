@@ -18,7 +18,7 @@ function addTask() {
   //save in local storage
   setTimeout(() => {
     saveTasksToLocalStorage();
-  }, 5000);
+  }, 2000);
 }
 
 // create Task
