@@ -280,6 +280,7 @@ function addSubtask() {
 // Save the subtask list to local storage
 function saveSubtasksToLocalStorage(subtaskList) {
   const subtasks = Array.from(subtaskList.getElementsByTagName('li')).map(subtask => subtask.textContent);
+  console.log(subtasks)
   localStorage.setItem(selectedTaskId, JSON.stringify(subtasks));
 }
 
