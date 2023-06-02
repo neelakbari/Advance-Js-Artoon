@@ -33,6 +33,8 @@ function createTask(taskId, taskName) {
   const randomImage = document.createElement("img");
   randomImage.setAttribute("id", taskId);
   fetchRandomImage(taskId);
+  // onclick event listener to navigate
+  randomImage.addEventListener('click',navigateToNextPage)
 
   const taskTitle = document.createElement("span");
   taskTitle.classList.add("taskTitle");
@@ -112,7 +114,8 @@ function loadTask(taskId, taskName, src) {
   const randomImage = document.createElement("img");
   randomImage.setAttribute("id", taskId);
   randomImage.src = src;
-
+  // onclick event listener to navigate
+  randomImage.addEventListener('click',navigateToNextPage)
   const taskTitle = document.createElement("span");
   taskTitle.classList.add("taskTitle");
   taskTitle.textContent = taskName;
@@ -125,4 +128,20 @@ function loadTask(taskId, taskName, src) {
   taskDiv.append(taskTitle);
   taskDiv.append(deleteButton);
   taskList.append(taskDiv);
+}
+
+//Navigate to next page
+
+function navigateToNextPage(event) {
+  const taskItem = event.target.parentElement;
+  const taskId = taskItem.dataset.taskId;
+  const taskName = taskItem.querySelector('.taskTitle').textContent;
+  console.log(taskItem)
+
+  // Save the task ID and task name to local storage
+  localStorage.setItem('selectedTaskId', taskId);
+  localStorage.setItem('selectedTaskName', taskName);
+
+  // Navigate to the next page
+  window.location.href = `subtasks.html?task=${encodeURIComponent(taskName)}`;
 }
