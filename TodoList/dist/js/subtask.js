@@ -3,6 +3,11 @@ window.addEventListener("DOMContentLoaded", loadSubtasksFromLocalStorage);
 
 // // Load subtasks from local storage when the page loads
 window.addEventListener("DOMContentLoaded", loadMicroTasksFromLocalStorage);
+// window.addEventListener("DOMContentLoaded", ()=>{
+
+//   localStorage.clear()
+// });
+
 
 
 //function to generate random id
@@ -12,7 +17,6 @@ function randomIdGenerator(num) {
 
 // Add title to subtask
 const selectedTaskId = localStorage.getItem("selectedTaskId");
-// console.log(selectedTaskId)
 const selectedTaskName = localStorage.getItem("selectedTaskName");
 
 // Set the task name as the title on the next page
@@ -75,7 +79,6 @@ function createSubTask(subTaskId, subTaskName) {
 function deleteTask(event) {
   const microTaskDiv = event.target.parentElement;
   const subTaskId = microTaskDiv.dataset.subTaskId;
-  console.log(subTaskId);
   microTaskDiv.remove();
 
   //remove it from local storage
@@ -91,7 +94,6 @@ function saveSubTasksToLocalStorage() {
       name: res.querySelector(".microTaskTitle").textContent,
     };
   });
-  console.log(subTaskList);
   localStorage.setItem(selectedTaskId, JSON.stringify(subTaskList));
 }
 
@@ -176,7 +178,6 @@ function iconHTML(parent) {
 
 //Completed micro task
 function done(event) {
-  console.log(event);
   let li = event.target.parentElement.parentElement;
   li.classList.contains("done")
     ? li.classList.remove("done")
@@ -195,12 +196,10 @@ function deleteMicroTask(event) {
 // function to save data to local storage
 function addMicroTaskToLocalStorage(microTaskId) {
   const ul = document.querySelector(`[data-micro-task-id="${microTaskId}"]`);
-  console.log(ul);
   const microTasks = Array.from(ul.querySelectorAll("li")).map((microTask) => {
     const textNode = microTask.firstChild;
     return textNode.textContent.trim();
   });
-  console.log(microTasks)
   const obj = { id: microTaskId, data: microTasks };
   localStorage.setItem(microTaskId, JSON.stringify(obj));
 
