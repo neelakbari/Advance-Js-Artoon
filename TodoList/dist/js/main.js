@@ -5,12 +5,25 @@ window.addEventListener("DOMContentLoaded", loadTasksFromLocalStorage);
 function randomIdGenerator() {
   return Math.floor(Math.random() * 10000);
 }
+const mainBtn = document.querySelector('#TaskBtn')
+mainBtn.addEventListener('click',addTask)
+
+// Add an event listener to the input field for the Enter key
+const taskInput = document.querySelector("#taskInput");
+taskInput.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // Prevent form submission
+    mainBtn.click(); // Trigger the button click event
+  }
+});
 
 //Add task
-function addTask() {
+function addTask(e) {
+  console.log(e.key)
+
   const taskInput = document.querySelector("#taskInput");
   const taskName = taskInput.value;
-  if (taskName.trim() !== "") {
+  if (e.keyCode === 13 || taskName.trim() !== "") {
     const taskId = randomIdGenerator();
     createTask(taskId, taskName);
     taskInput.value = "";
@@ -136,7 +149,6 @@ function navigateToNextPage(event) {
   const taskItem = event.target.parentElement;
   const taskId = taskItem.dataset.taskId;
   const taskName = taskItem.querySelector('.taskTitle').textContent;
-  console.log(taskItem)
 
   // Save the task ID and task name to local storage
   localStorage.setItem('selectedTaskId', taskId);
