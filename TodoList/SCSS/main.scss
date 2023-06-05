@@ -112,7 +112,8 @@ body {
   width: 100%;
   padding: 1rem;
   background: #000000;
-  margin-bottom: 2rem;
+    color: white;
+    margin-bottom: 2rem;
 
   & #taskTitle{
     color: white;
@@ -132,7 +133,8 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
+    color: white;
+    flex-wrap: wrap;
 
   .microTaskContainer{
     background: #000;
@@ -142,11 +144,13 @@ body {
     gap: 1rem;
     justify-content: center;
     align-items: center;
+    color: white;
     position: relative;
 
     & .microTaskTitle{
       border-bottom: 2px solid white;
       width: 100%;
+      color: white;
       text-align: center;
       padding: .5rem 0;
     }
@@ -156,7 +160,7 @@ body {
       border: none;
       padding: .5rem .2rem;
       font-size: 1.1rem;
-      color: white;
+      // color: white;
     }
 
     & ul {

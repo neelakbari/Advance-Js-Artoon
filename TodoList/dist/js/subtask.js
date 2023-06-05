@@ -7,6 +7,12 @@ window.addEventListener("DOMContentLoaded", renderSubTasks);
 
 //   localStorage.clear()
 // });
+window.addEventListener("DOMContentLoaded", ()=>{
+JSON.parse(localStorage.getItem(selectedTaskId)).map(({id})=>{
+      renderMicroTasks(id);
+      console.log(id)
+    })
+});
 
 //function to generate random id
 function randomIdGenerator() {
@@ -133,10 +139,10 @@ function addlisteners() {
     const input = container.querySelector("input");
     console.log(input);
     console.log(JSON.parse(localStorage.getItem(selectedTaskId)))
-    JSON.parse(localStorage.getItem(selectedTaskId)).map(({id})=>{
-      renderMicroTasks(id);
-      console.log("Called")
-    })
+    // JSON.parse(localStorage.getItem(selectedTaskId)).map(({id})=>{
+    //   renderMicroTasks(id);
+    //   console.log("Called")
+    // })
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
@@ -146,7 +152,7 @@ function addlisteners() {
 
         //save it to local storage 
         console.log(microTasks)
-  localStorage.setItem(microTaskId, JSON.stringify(microTasks));
+  localStorage.setItem("microTasks", JSON.stringify(microTasks));
 
         // localStorage.setItem(microTaskId,JSON.stringify(microTaskId));
         // localStorage.setItem("microTasks",JSON.stringify(microTasks));
@@ -173,7 +179,7 @@ function addlisteners() {
       renderMicroTasks(microTaskId);
       console.log(microTasks)
   // localStorage.setItem(selectedTaskId, JSON.stringify(subTasks));
-  localStorage.setItem(microTaskId, JSON.stringify(microTasks));
+  localStorage.setItem("microTasks", JSON.stringify(microTasks));
 
 
       // localStorage.setItem("MicroTasks",JSON.stringify(microTasks));
@@ -197,7 +203,7 @@ function addlisteners() {
       });
       renderMicroTasks(microTaskId);
   // localStorage.setItem(selectedTaskId, JSON.stringify(subTasks));
-  localStorage.setItem(microTaskId, JSON.stringify(microTasks));
+  localStorage.setItem("microTasks", JSON.stringify(microTasks));
 
       // localStorage.setItem("MicroTasks",JSON.stringify(microTasks));
     }
@@ -231,8 +237,8 @@ function editSubTask(id) {
 //micro Tasks List
 
 //var
-// var microTasks = JSON.parse(localStorage.getItem("MicroTasks")) || [];
-var microTasks = [];
+var microTasks = JSON.parse(localStorage.getItem("microTasks")) || [];
+// var microTasks = [];
 console.log(microTasks)
 let editMicroTaskId = -1;
 
@@ -271,12 +277,14 @@ function addMicroTask(uniqueValue) {
 
 //render microTasks
 function renderMicroTasks(id) {
+  console.log("renderMicroTasks called")
   const microTaskInput = document.getElementById(`${id}`);
   const microTaskList = microTaskInput.nextElementSibling;
   const ulid = microTaskList.id;
   // console.log(microTaskList);
   // const liid = randomIdGenerator();
   microTaskList.innerHTML = "";
+  console.log(microTasks)
   const filteredTasks = microTasks.filter(
     (microtask) => microtask.parent == ulid
   );

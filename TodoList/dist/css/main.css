@@ -104,6 +104,7 @@ body {
   width: 100%;
   padding: 1rem;
   background: #000000;
+  color: white;
   margin-bottom: 2rem;
 }
 .subTaskTitle #taskTitle {
@@ -125,6 +126,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  color: white;
   flex-wrap: wrap;
 }
 #subtaskList .microTaskContainer {
@@ -135,11 +137,13 @@ body {
   gap: 1rem;
   justify-content: center;
   align-items: center;
+  color: white;
   position: relative;
 }
 #subtaskList .microTaskContainer .microTaskTitle {
   border-bottom: 2px solid white;
   width: 100%;
+  color: white;
   text-align: center;
   padding: 0.5rem 0;
 }
@@ -148,7 +152,6 @@ body {
   border: none;
   padding: 0.5rem 0.2rem;
   font-size: 1.1rem;
-  color: white;
 }
 #subtaskList .microTaskContainer ul {
   width: 100%;
