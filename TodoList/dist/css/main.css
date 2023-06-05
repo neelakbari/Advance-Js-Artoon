@@ -158,25 +158,29 @@ body {
   padding: 0.5rem;
   background: linear-gradient(to right, rgb(1, 90, 96), rgb(33, 72, 109));
   width: 100%;
-  text-align: center;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 1.2rem;
+  position: relative;
+  display: inline-block;
 }
 #subtaskList .microTaskContainer ul .microTaskItem.done {
   text-decoration: line-through;
   color: #5f5f5f;
 }
-#subtaskList .microTaskContainer ul .microTaskItem .iconWrapper span {
-  padding: 5px;
-  border-radius: 50%;
-  text-decoration: none;
+#subtaskList .microTaskContainer ul .microTaskItem i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem;
   cursor: pointer;
 }
-#subtaskList .microTaskContainer ul .microTaskItem .iconWrapper span:hover {
-  background-color: rgb(46, 44, 44);
+#subtaskList .microTaskContainer ul .microTaskItem i:nth-child(2) {
+  right: 50px;
+}
+#subtaskList .microTaskContainer ul .microTaskItem i:nth-child(3) {
+  right: 22px;
+}
+#subtaskList .microTaskContainer ul .microTaskItem i:nth-child(4) {
+  right: 0px;
 }
 #subtaskList .microTaskContainer .deleteButton {
   position: absolute;

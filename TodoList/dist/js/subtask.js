@@ -1,8 +1,8 @@
 // Load subtasks from local storage when the page loads
-window.addEventListener("DOMContentLoaded", loadSubtasksFromLocalStorage);
+window.addEventListener("DOMContentLoaded", renderSubTasks);
 
 // // Load subtasks from local storage when the page loads
-window.addEventListener("DOMContentLoaded", renderSubTasks);
+// window.addEventListener("DOMContentLoaded", renderSubTasks);
 // window.addEventListener("DOMContentLoaded", ()=>{
 
 //   localStorage.clear()
@@ -25,6 +25,8 @@ taskTitleElement.textContent = selectedTaskName;
 var subTasks = JSON.parse(localStorage.getItem(selectedTaskId)) || [];
 let editSubTaskId = -1;
 // renderSubTasks();
+// addlistener();
+
 const subTaskSubmitButton = document.querySelector("#subTaskSubmitButton");
 subTaskSubmitButton.addEventListener("click", () => {
   addsubtask();
@@ -32,6 +34,10 @@ subTaskSubmitButton.addEventListener("click", () => {
 
   //save to the local storage
   localStorage.setItem(selectedTaskId, JSON.stringify(subTasks));
+  // subTasks.forEach(subtask => {
+    
+  //   localStorage.setItem(subtask.id, JSON.stringify(subtask.value));
+  // });
 });
 
 //subtask
@@ -77,40 +83,133 @@ function renderSubTasks() {
   subTasks.forEach((subtask) => {
     subTaskList.innerHTML += `
     <div
-  class="microTaskContainer"
-  ondrop="drop(event)"
-  ondragover="allowDrop(event)"
-  data-sub-task-id="${subtask.id}"
->
-  <h3 class="microTaskTitle" data-action = "edit">${subtask.value}</h3>
-  <input type="text" id="${subtask.id}"/>
-  <ul class="microTaskList" id="${subtask.value}"></ul>
-  <span class="deleteButton" data-action = "delete">×</span>
-</div>
+    class="microTaskContainer"
+    ondrop="drop(event)"
+    ondragover="allowDrop(event)"
+    data-sub-task-id="${subtask.id}"
+    >
+    <h3 class="microTaskTitle" data-action = "edit">${subtask.value}</h3>
+    <input type="text" id="${subtask.id}"/>
+    
+    <ul class="microTaskList" id="${subtask.value}"></ul>
+    <span class="deleteButton" data-action = "delete">×</span>
+    </div>
     `;
   });
+  addlisteners();
+}
+//to add event listener
+// function addlistener(){
+//   console.log("called")
+//   subTasks.forEach((subtask) => {
+//     const inputs = document.querySelector(".microTaskContainer input");
+//       inputs.addEventListener("keydown", (event) => {
+//         if (event.key == "Enter") {
+//           event.preventDefault();
+//           addMicroTask(subtask.id);
+//           renderMicroTasks(subtask.id);
+//           console.log(subtask.id)
+//         }
+//         console.log(inputs);
+//       });
+//     });
+// }
+
+//function to add event listeners
+function addlisteners() {
+  
+  const microTaskContainer = document.querySelectorAll(".microTaskContainer");
+  microTaskContainer.forEach((container) => {
+    const microTaskId = container.dataset.subTaskId;
+    // renderMicroTasks(JSON.parse(localStorage.getItem(microTaskId)));
+    const edit = container.querySelector('[data-action="edit"]');
+    const deleted = container.querySelector('[data-action="delete"]');
+    edit.addEventListener("click", () => {
+      editSubTask(microTaskId);
+    });
+    deleted.addEventListener("click", () => {
+      deleteSubtask(microTaskId);
+    });
+    const input = container.querySelector("input");
+    console.log(input);
+    console.log(JSON.parse(localStorage.getItem(selectedTaskId)))
+    JSON.parse(localStorage.getItem(selectedTaskId)).map(({id})=>{
+      renderMicroTasks(id);
+      console.log("Called")
+    })
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addMicroTask(microTaskId);
+        renderMicroTasks(microTaskId);
+        microTaskfunctionality(microTaskId);
+
+        //save it to local storage 
+        console.log(microTasks)
+  localStorage.setItem(microTaskId, JSON.stringify(microTasks));
+
+        // localStorage.setItem(microTaskId,JSON.stringify(microTaskId));
+        // localStorage.setItem("microTasks",JSON.stringify(microTasks));
+      }
+    });
+    function microTaskfunctionality(id) {
+      const UL = document.getElementById(id).nextElementSibling;
+      UL.addEventListener("click", (event) => {
+        const target = event.target;
+        const parent = target.parentElement;
+        if (!parent.classList.contains("microTaskItem")) return;
+        const microTaskId = parent.id;
+
+        //actions
+        const action = target.dataset.action;
+        action === "delete" && deleteMicroTask(microTaskId);
+        action === "edit" && editMicroTask(microTaskId)
+        action === "check" && checkMicroTask(microTaskId);
+        // console.log(microTaskId)
+      });
+    }
+    function deleteMicroTask(id) {
+      microTasks = microTasks.filter((microtask, index) => microtask.id !== id);
+      renderMicroTasks(microTaskId);
+      console.log(microTasks)
+  // localStorage.setItem(selectedTaskId, JSON.stringify(subTasks));
+  localStorage.setItem(microTaskId, JSON.stringify(microTasks));
+
+
+      // localStorage.setItem("MicroTasks",JSON.stringify(microTasks));
+    }
+    function editMicroTask(id){
+      let value = microTasks.map((res,index)=>{
+        if(res.id ===id){
+          return Number(index);
+        }
+      });
+      let filtered = value.filter((res)=>typeof res === "number")
+      input.value = microTasks[filtered].value
+      editMicroTaskId = Number(filtered);
+    }
+    function checkMicroTask(id) {
+      microTasks = microTasks.map((microtask) => {
+        return {
+          ...microtask,
+          checked: id === microtask.id ? !microtask.checked : microtask.checked,
+        };
+      });
+      renderMicroTasks(microTaskId);
+  // localStorage.setItem(selectedTaskId, JSON.stringify(subTasks));
+  localStorage.setItem(microTaskId, JSON.stringify(microTasks));
+
+      // localStorage.setItem("MicroTasks",JSON.stringify(microTasks));
+    }
+  });
+  console.log(microTaskContainer);
 }
 const subTaskList = document.getElementById("subtaskList");
-subTaskList.addEventListener("click", (event) => {
-  const target = event.target;
-  const parent = target.parentElement;
-  if (parent.className !== "microTaskContainer") return;
-
-  // console.log(target, parent);
-
-  //micro task
-  // const microTaskContainer = parent;
-  microTaskId = parent.dataset.subTaskId;
-  // console.log(microTaskId)
-  //actions
-  const action = target.dataset.action;
-  action === "delete" && deleteSubtask(microTaskId);
-  action === "edit" && editSubTask(microTaskId);
-});
 
 function deleteSubtask(id) {
   // console.log(subTasks)
   subTasks = subTasks.filter((subtask) => subtask.id !== id);
+  console.log(subTasks);
 
   renderSubTasks();
   //save the updated array in local storage
@@ -129,122 +228,85 @@ function editSubTask(id) {
   editSubTaskId = Number(filtered);
 }
 
-//add subTasks
-function addSubtask() {
-  const subTaskId = randomIdGenerator();
-  const subTaskInput = document.querySelector("#subtaskInput");
-  const subTaskName = subTaskInput.value;
+//micro Tasks List
 
-  //function to create tasks
-  if (subTaskName.trim() !== "") {
-    createSubTask(subTaskId, subTaskName);
-    subTaskInput.value = "";
-  }
+//var
+// var microTasks = JSON.parse(localStorage.getItem("MicroTasks")) || [];
+var microTasks = [];
+console.log(microTasks)
+let editMicroTaskId = -1;
 
-  //save Subtasks to local Storage
-  saveSubTasksToLocalStorage();
-}
+//addMicroTask
+function addMicroTask(uniqueValue) {
+  const microTaskInput = document.getElementById(`${uniqueValue}`);
+  const microTaskName = microTaskInput.value;
+  const microTaskList = microTaskInput.nextElementSibling;
+  const microTaskId = microTaskList.getAttribute("id");
 
-function createSubTask(subTaskId, subTaskName) {
-  const subTaskInput = document.querySelector(".inputSection");
-  const subTaskList = document.getElementById("subtaskList");
-
-  const microTaskDiv = document.createElement("div");
-  microTaskDiv.classList.add("microTaskContainer");
-  microTaskDiv.setAttribute("ondrop", "drop(event)");
-  microTaskDiv.setAttribute("ondragover", "allowDrop(event)");
-  microTaskDiv.dataset.subTaskId = subTaskId;
-
-  const microTaskTitle = document.createElement("h3");
-  microTaskTitle.classList.add("microTaskTitle");
-  microTaskTitle.textContent = subTaskName;
-
-  const microTaskInput = document.createElement("input");
-  // microTaskInput.addEventListener("blur", () => {
-  //   addMicroTask(subTaskId);
-  // });
-  const microTaskList = document.createElement("ul");
-  microTaskList.classList.add("microTaskList");
-  microTaskList.dataset.microTaskId = subTaskName;
-
-  const deleteButton = document.createElement("span");
-  deleteButton.classList.add("deleteButton");
-  deleteButton.innerHTML = "\u00d7";
-  deleteButton.addEventListener("click", deleteTask);
-
-  microTaskDiv.append(microTaskTitle);
-  microTaskDiv.append(microTaskInput);
-  microTaskDiv.append(microTaskList);
-  microTaskDiv.append(deleteButton);
-
-  subTaskList.insertBefore(microTaskDiv, subTaskInput);
-}
-
-//delete subTask
-function deleteTask(event) {
-  const microTaskDiv = event.target.parentElement;
-  const subTaskId = microTaskDiv.dataset.subTaskId;
-  microTaskDiv.remove();
-
-  //remove it from local storage
-  removeSubTaskFromLocalStorage(subTaskId);
-}
-
-// Save the subtask list to local storage
-function saveSubTasksToLocalStorage() {
-  const subTasks = Array.from(document.querySelectorAll(".microTaskContainer"));
-  let subTaskList = subTasks.map((res) => {
-    return {
-      id: res.dataset.subTaskId,
-      name: res.querySelector(".microTaskTitle").textContent,
+  //function to create microTasks
+  if (microTaskName.trim() === "") {
+    alert("microTasks Cannnot Be Empty");
+  }else if (editMicroTaskId>=0) {
+    microTasks = microTasks.map((microtask,index)=>{
+      return{
+        ...microtask,
+        value:index === editMicroTaskId ? microTaskName :microtask.value,
+      }
+    })
+    editMicroTaskId = -1;
+    microTaskInput.value = ""; 
+  } 
+  else {
+    const microTask = {
+      id: randomIdGenerator(),
+      parent: microTaskId,
+      value: microTaskName,
+      checked: false,
     };
+    microTasks.push(microTask);
+    microTaskInput.value = "";
+  }
+  // console.log(microTasks);
+}
+
+//render microTasks
+function renderMicroTasks(id) {
+  const microTaskInput = document.getElementById(`${id}`);
+  const microTaskList = microTaskInput.nextElementSibling;
+  const ulid = microTaskList.id;
+  // console.log(microTaskList);
+  // const liid = randomIdGenerator();
+  microTaskList.innerHTML = "";
+  const filteredTasks = microTasks.filter(
+    (microtask) => microtask.parent == ulid
+  );
+  filteredTasks.forEach((microtask, index) => {
+    microTaskList.innerHTML += `
+    <li draggable="true" class="microTaskItem ${
+      microtask.checked ? "done" : ""
+    }" ondragstart="drag(event)" id = ${microtask.id}>
+    <h3>${microtask.value}</h3>
+  <i class="far fa-check-circle" data-action = "check"></i>
+  <i class="fas fa-edit" data-action = "edit"></i>
+  <i class="fas fa-trash" data-action = "delete"></i>
+</li>
+    `;
   });
-  localStorage.setItem(selectedTaskId, JSON.stringify(subTaskList));
 }
 
-//load item from Local Storage
-function loadSubtasksFromLocalStorage() {
-  const subTasks = Array.from(JSON.parse(localStorage.getItem(selectedTaskId)));
-  subTasks.forEach((element) => {
-    createSubTask(element.id, element.name);
-  });
-}
-//remove it from local Storage
-
-function removeSubTaskFromLocalStorage(id) {
-  const subTasks = Array.from(JSON.parse(localStorage.getItem(selectedTaskId)));
-  let updatedSubTasks = subTasks.filter((res) => res.id !== id);
-  localStorage.setItem(selectedTaskId, JSON.stringify(updatedSubTasks));
-}
-
-// //micro Tasks List
-
-// //addMicroTask
-// function addMicroTask(uniqueValue) {
-//   const microTaskInput = document.querySelector(
-//     `.microTaskContainer[data-sub-task-id="${uniqueValue}"] input`
-//   );
-//   const microTaskName = microTaskInput.value;
-//   const microTaskList = microTaskInput.nextElementSibling;
-
-//   const microTaskId = microTaskList.getAttribute("data-micro-task-id");
-
-//   //function to create microTasks
-//   if (microTaskName.trim() !== "") {
-//     createMicroTask(microTaskName, microTaskId);
-//     microTaskInput.value = "";
-//   }
+// function createli(){
+//     const li = document.createElement('li');
+//     li.classList.add('microTaskitem')
 // }
 
 // //create microTasks
 // function createMicroTask(microTaskName, microTaskId) {
-//   const microTaskList = document.querySelector(
-//     `[data-micro-task-id="${microTaskId}"]`
-//   );
+//   // console.log(microTaskId)
+//   const microTaskList = document.querySelector(`#${microTaskId}`);
 //   const microTaskItem = document.createElement("li");
 //   microTaskItem.classList.add("microTaskItem");
-//   microTaskItem.setAttribute('draggabble',"true")
-//   microTaskItem.setAttribute('ondragstart',"drag(event)")
+//   microTaskItem.setAttribute("draggabble", "true");
+//   microTaskItem.setAttribute("ondragstart", "drag(event)");
 //   microTaskItem.textContent = microTaskName;
 //   iconHTML(microTaskItem);
 //   microTaskList.appendChild(microTaskItem);
@@ -291,22 +353,21 @@ function removeSubTaskFromLocalStorage(id) {
 // //delete deleteMicroTask
 // function deleteMicroTask(event) {
 //   let li = event.target.parentElement.parentElement;
-//   ulId = li.parentElement.dataset.microTaskId
+//   ulId = li.parentElement.dataset.microTaskId;
 //   li.remove();
 //   //remove it from local storage
-//   removeMicroTaskFromLocalStorage(ulId)
+//   removeMicroTaskFromLocalStorage(ulId);
 // }
 
 // // function to save data to local storage
 // function addMicroTaskToLocalStorage(microTaskId) {
-//   const ul = document.querySelector(`[data-micro-task-id="${microTaskId}"]`);
+//   const ul = document.querySelector(`#${microTaskId}`);
 //   const microTasks = Array.from(ul.querySelectorAll("li")).map((microTask) => {
 //     const textNode = microTask.firstChild;
 //     return textNode.textContent.trim();
 //   });
 //   const obj = { id: microTaskId, data: microTasks };
 //   localStorage.setItem(microTaskId, JSON.stringify(obj));
-
 // }
 
 // //load item from Local Storage
@@ -321,13 +382,13 @@ function removeSubTaskFromLocalStorage(id) {
 //   });
 //   collection.forEach((res) => {
 //     const local = JSON.parse(localStorage.getItem(res));
-//     local.data.forEach((res)=>{
-//       createMicroTask(res,local.id)
-//     })
+//     local.data.forEach((res) => {
+//       createMicroTask(res, local.id);
+//     });
 //   });
 // }
 
 // // remove it from local Storage
 // function removeMicroTaskFromLocalStorage(ulId) {
-//   addMicroTaskToLocalStorage(ulId)
+//   addMicroTaskToLocalStorage(ulId);
 // }
