@@ -120,7 +120,13 @@ body {
     text-align: center;
   }
 }
-
+.subtasks{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
 #subtaskList{
   display: flex;
   justify-content: center;

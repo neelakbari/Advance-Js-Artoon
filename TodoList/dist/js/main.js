@@ -1,3 +1,8 @@
+// window.addEventListener("DOMContentLoaded", ()=>{
+
+//   localStorage.clear()
+// });
+
 //load tasks from LocalStorage on page load
 window.addEventListener("DOMContentLoaded", loadTasksFromLocalStorage);
 
