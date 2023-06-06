@@ -1,25 +1,15 @@
 // Load subtasks from local storage when the page loads
 window.addEventListener("DOMContentLoaded", renderSubTasks);
 
-// // Load microtasks from local storage when the page loads
-window.addEventListener("DOMContentLoaded", rerenderMicrotasks);
-// window.addEventListener("DOMContentLoaded", reinitiate);
-
 // window.addEventListener("DOMContentLoaded", ()=>{localStorage.clear()});
 
 //rerender microtasks
 function rerenderMicrotasks() {
-  JSON.parse(localStorage.getItem(selectedTaskId)).map(({ id}) => {
-    // console.log(inputsid);
-    // addMicroTask(id);
+  JSON.parse(localStorage.getItem(selectedTaskId)).map(({ id }) => {
     renderMicroTasks(id);
-    // microTaskfunctionality(id);
   });
 }
 
-// setTimeout(() => {
-//   reinitiate();
-// }, 2000);
 //function to generate random id
 function randomIdGenerator() {
   return new Date().getTime().toString();
@@ -48,7 +38,6 @@ subTaskSubmitButton.addEventListener("click", () => {
   subTasks.forEach((subtask) => {
     localStorage.setItem(subtask.id, JSON.stringify(subtask.value));
   });
-  rerenderMicrotasks();
 });
 
 //subtask
@@ -96,167 +85,223 @@ function renderSubTasks() {
     ondragover="allowDrop(event)"
     data-sub-task-id="${subtask.id}"
     >
-    <h3 class="microTaskTitle" data-action = "edit">${subtask.value}</h3>
-    <input type="text" id="${subtask.id}"/>
+    <h3 class="microTaskTitle" data-action = "edit" onclick="editSubTask(${subtask.id})">${subtask.value}</h3>
+    <input type="text" id="${subtask.id}" onblur = "inputBlurHandler(${subtask.id})"/>
     
     <ul class="microTaskList" id="${subtask.value}"></ul>
-    <span class="deleteButton" data-action = "delete">×</span>
+    <span class="deleteButton" data-action = "delete" onclick="deleteSubtask(${subtask.id})">×</span>
     </div>
     `;
+    renderMicroTasks(subtask.id);
   });
-  addlisteners();
+}
+function inputHandler(event) {
+  event.preventDefault();
+  event.stopPropagation();
 }
 
+function inputBlurHandler(microTaskId) {
+  addMicroTask(microTaskId);
+  renderMicroTasks(microTaskId);
+  localStorage.setItem("microTasks", JSON.stringify(microTasks));
+}
+
+function deleteMicroTask(id) {
+  microTasks = microTasks.filter((microtask) => Number(microtask.id) !== id);
+  localStorage.setItem("microTasks", JSON.stringify(microTasks));
+  rerenderMicrotasks();
+}
+function editMicroTask(event, id) {
+  const target = event.target;
+  const liElement = target.closest("li");
+  const h3Element = liElement.querySelector("h3");
+  const currentText = h3Element.textContent;
+
+  // Convert the <li> into an input field
+  liElement.innerHTML = `
+      <input type="text" value="${currentText}" class="microTaskEdit" />
+      <button data-action="save">Save</button>
+    `;
+
+  const input = liElement.querySelector(".microTaskEdit");
+  input.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+      saveupdated(id);
+    }
+  });
+  const saveButton = liElement.querySelector('[data-action="save"]');
+  saveButton.addEventListener("click", (event) => {
+    saveupdated(id)})
+
+    function saveupdated(id){
+    const inputElement = liElement.querySelector("input");
+    const updatedValue = inputElement.value;
+    if (updatedValue === "") {
+      alert("Cannot be Empty Task");
+      inputElement.focus();
+      return;
+    }
+    // Convert the input field back to an <h3> element
+    liElement.innerHTML = `<h3>${updatedValue}</h3>
+    
+    <i class="far fa-check-circle" data-action = "check"></i>
+    <i class="fas fa-edit" data-action = "edit"></i>
+    <i class="fas fa-trash" data-action = "delete"></i>
+    `;
+    event.stopPropagation();
+    microTasks = microTasks.map((microtask) => {
+      return {
+        ...microtask,
+        value: id === Number(microtask.id) ? updatedValue : microtask.value,
+      };
+    });
+    localStorage.setItem("microTasks", JSON.stringify(microTasks));
+    rerenderMicrotasks();
+  };
+}
+function checkMicroTask(id) {
+  microTasks = microTasks.map((microtask) => {
+    return {
+      ...microtask,
+      checked:
+        id === Number(microtask.id) ? !microtask.checked : microtask.checked,
+    };
+  });
+  // renderMicroTasks(microTaskId);
+  localStorage.setItem("microTasks", JSON.stringify(microTasks));
+  rerenderMicrotasks();
+}
 //function to add event listeners
-function addlisteners() {
-  const microTaskContainer = document.querySelectorAll(".microTaskContainer");
-  microTaskContainer.forEach((container) => {
-    debugger
-    if (microTasks.length > 0 ) {
-      debugger
-      console.log("LEDSFDS")
-      reinitiate();
-    }
-    const microTaskId = container.dataset.subTaskId;
-    const edit = container.querySelector('[data-action="edit"]');
-    const deleted = container.querySelector('[data-action="delete"]');
-    edit.addEventListener("click", () => {
-      editSubTask(microTaskId);
-    });
-    deleted.addEventListener("click", () => {
-      deleteSubtask(microTaskId);
-    });
-    const input = container.querySelector("input");
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        debugger
-        // event.preventDefault();
-        addMicroTask(microTaskId);
-        renderMicroTasks(microTaskId);
-        microTaskfunctionality(microTaskId);
+// function addlisteners() {
+//   //
+//   const microTaskContainer = document.querySelectorAll(".microTaskContainer");
+//   microTaskContainer.forEach((container) => {
+//     const microTaskId = container.dataset.subTaskId;
+//     const edit = container.querySelector('[data-action="edit"]');
+//     const deleted = container.querySelector('[data-action="delete"]');
+//     const input = container.querySelector("input");
+//     // edit.removeEventListener("click", editSubTask);
+//     // deleted.removeEventListener("click", deleteSubtask);
+//     // input.removeEventListener("click", inputClickHandler);
 
-        //save it to local storage
+//     // edit.addEventListener("click", () => {
+//     //   editSubTask(microTaskId);
+//     // });
+//     // deleted.addEventListener("click", () => {
+//     //   deleteSubtask(microTaskId);
+//     // });
+//     // input.addEventListener("click", (event) => inputClickHandler(event));
+//     input.addEventListener("blur", (event) => {
+//       addMicroTask(microTaskId);
+//       renderMicroTasks(microTaskId);
+//       microTaskfunctionality(microTaskId);
 
-        localStorage.setItem("microTasks", JSON.stringify(microTasks));
-      }
-    });
-    function reinitiate(){
-      debugger
-      JSON.parse(localStorage.getItem(selectedTaskId)).map(({ id}) => {
-        // console.log(inputsid);
-        // addMicroTask(id);
-        // renderMicroTasks(id);
-        microTaskfunctionality(id);
-      })
-    }
-    function microTaskfunctionality(id) {
-      debugger
-      const UL = document.getElementById(id).nextElementSibling;
-      if (!UL || UL.tagName !== "UL") {
-        console.error("Invalid UL element");
-        return;
-      }
-      UL.addEventListener("click", (event) => {
-        const target = event.target;
-        const parent = target.parentElement;
+//       //save it to local storage
 
-        // if (!(parent.classList.contains("microTaskItem"))) return;
-        const microTaskId = parent.id;
+//       localStorage.setItem("microTasks", JSON.stringify(microTasks));
+//     });
+//     function microTaskfunctionality(id) {
+//       //
+//       const UL = document.getElementById(id).nextElementSibling;
+//       if (!UL || UL.tagName !== "UL") {
+//         console.error("Invalid UL element");
+//         return;
+//       }
+//       UL.addEventListener("click", (event) => {
+//         event.stopPropagation();
 
-        //actions
-        const action = target.dataset.action;
-        action === "delete" && deleteMicroTask(microTaskId);
-        action === "edit" && editMicroTask(event, microTaskId);
-        action === "check" && checkMicroTask(microTaskId);
-      });
-    }
-    function deleteMicroTask(id) {
-      microTasks = microTasks.filter((microtask) => microtask.id !== id);
-      // renderMicroTasks(microTaskId);
-      localStorage.setItem("microTasks", JSON.stringify(microTasks));
-      rerenderMicrotasks();
-    }
-    function editMicroTask(event, id) {
-      console.log(event);
-      // Handle edit action
-      const target = event.target;
-      const liElement = target.closest("li");
-      const h3Element = liElement.querySelector("h3");
-      const currentText = h3Element.textContent;
+//         const target = event.target;
+//         const parent = target.parentElement;
 
-      // Convert the <li> into an input field
-      liElement.innerHTML = `
-          <input type="text" value="${currentText}" class="microTaskEdit" />
-          <button data-action="save">Save</button>
-        `;
+//         if (!parent.classList.contains("microTaskItem")) return;
+//         const microTaskId = parent.id;
 
-      const input = liElement.querySelector(".microTaskEdit");
-      console.log(input)
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          saveupdated(id);
-        }
-      });
-      const saveButton = liElement.querySelector('[data-action="save"]');
-      saveButton.addEventListener("click", ()=>saveupdated(id));
-      function saveupdated(id){
-        const inputElement = liElement.querySelector("input");
-          const updatedValue = inputElement.value;
-          if (updatedValue === "") {
-            alert("Cannot be Empty Task");
-            inputElement.focus();
-            return
-          }
-          // Convert the input field back to an <h3> element
-          liElement.innerHTML = `<h3>${updatedValue}</h3>
-        
-          <i class="far fa-check-circle" data-action = "check"></i>
-          <i class="fas fa-edit" data-action = "edit"></i>
-          <i class="fas fa-trash" data-action = "delete"></i>
-        `;
-        microTasks = microTasks.map((microtask)=>{
-          return{
-            ...microtask,
-            value:(id === microtask.id)? updatedValue : microtask.value
-          }
-        })
-        console.log(microTasks)
-        localStorage.setItem("microTasks", JSON.stringify(microTasks));
-        rerenderMicrotasks();
-      }
-      // renderMicroTasks(id);
-      
-    }
-    function checkMicroTask(id) {
-      microTasks = microTasks.map((microtask) => {
-        return {
-          ...microtask,
-          checked: id === microtask.id ? !microtask.checked : microtask.checked,
-        };
-      });
-      console.log(microTasks)
-      // renderMicroTasks(microTaskId);
-      localStorage.setItem("microTasks", JSON.stringify(microTasks));
-      rerenderMicrotasks();
-    }
-  });
-}
+//         //actions
+//         const action = target.dataset.action;
+//         action === "delete" && deleteMicroTask(microTaskId);
+//         action === "check" && checkMicroTask(microTaskId);
+//         action === "edit" && editMicroTask(event, microTaskId);
+//       });
+//     }
+//     function deleteMicroTask(id) {
+//       microTasks = microTasks.filter((microtask) => microtask.id !== id);
+//       localStorage.setItem("microTasks", JSON.stringify(microTasks));
+//       rerenderMicrotasks();
+//     }
+//     function editMicroTask(event, id) {
+//       const target = event.target;
+//       const liElement = target.closest("li");
+//       const h3Element = liElement.querySelector("h3");
+//       const currentText = h3Element.textContent;
+
+//       // Convert the <li> into an input field
+//       liElement.innerHTML = `
+//           <input type="text" value="${currentText}" class="microTaskEdit" />
+//           <button data-action="save">Save</button>
+//         `;
+
+//       // const input = liElement.querySelector(".microTaskEdit");
+//       // input.addEventListener("keyup", (event) => {
+//       //   if (event.key === "Enter") {
+//       //     saveupdated(id);
+//       //   }
+//       // });
+//       const saveButton = liElement.querySelector('[data-action="save"]');
+//       saveButton.addEventListener("click", (event) => {
+//         const inputElement = liElement.querySelector("input");
+//         const updatedValue = inputElement.value;
+//         if (updatedValue === "") {
+//           alert("Cannot be Empty Task");
+//           inputElement.focus();
+//           return;
+//         }
+//         // Convert the input field back to an <h3> element
+//         liElement.innerHTML = `<h3>${updatedValue}</h3>
+
+//         <i class="far fa-check-circle" data-action = "check"></i>
+//         <i class="fas fa-edit" data-action = "edit"></i>
+//         <i class="fas fa-trash" data-action = "delete"></i>
+//         `;
+//         event.stopPropagation();
+//         microTasks = microTasks.map((microtask) => {
+//           return {
+//             ...microtask,
+//             value: id === microtask.id ? updatedValue : microtask.value,
+//           };
+//         });
+//         localStorage.setItem("microTasks", JSON.stringify(microTasks));
+//         rerenderMicrotasks();
+//       });
+//     }
+//     function checkMicroTask(id) {
+//       microTasks = microTasks.map((microtask) => {
+//         return {
+//           ...microtask,
+//           checked: id === microtask.id ? !microtask.checked : microtask.checked,
+//         };
+//       });
+//       // renderMicroTasks(microTaskId);
+//       localStorage.setItem("microTasks", JSON.stringify(microTasks));
+//       rerenderMicrotasks();
+//     }
+//   });
+// }
 const subTaskList = document.getElementById("subtaskList");
 
 function deleteSubtask(id) {
-  debugger
-  subTasks = subTasks.filter((subtask) => subtask.id !== id);
+  subTasks = subTasks.filter((subtask) => Number(subtask.id) !== id);
 
   renderSubTasks();
   //save the updated array in local storage
   localStorage.setItem(selectedTaskId, JSON.stringify(subTasks));
-  rerenderMicrotasks();
+  // rerenderMicrotasks();
+  // renderMicroTasks(id)
 }
 
 function editSubTask(id) {
   const subTaskInput = document.querySelector("#subtaskInput");
   let value = subTasks.map((subtask, index) => {
-    if (subtask.id === id) {
+    if (Number(subtask.id) === id) {
       return Number(index);
     }
   });
@@ -293,7 +338,7 @@ function addMicroTask(uniqueValue) {
       parent: microTaskId,
       value: microTaskName,
       checked: false,
-      inputsid : inputId,
+      inputsid: inputId,
     };
     microTasks.push(microTask);
     microTaskInput.value = "";
@@ -310,15 +355,45 @@ function renderMicroTasks(id) {
     (microtask) => microtask.parent == ulid
   );
   filteredTasks.forEach((microtask) => {
+    //
     microTaskList.innerHTML += `
     <li draggable="true" class="microTaskItem ${
       microtask.checked ? "done" : ""
     }" ondragstart="drag(event)" id = ${microtask.id}>
     <h3>${microtask.value}</h3>
-  <i class="far fa-check-circle" data-action = "check"></i>
-  <i class="fas fa-edit" data-action = "edit"></i>
-  <i class="fas fa-trash" data-action = "delete"></i>
+  <i class="far fa-check-circle" data-action = "check" onclick="checkMicroTask(${
+    microtask.id
+  })"></i>
+  <i class="fas fa-edit" data-action = "edit" onclick="editMicroTask(event,${
+    microtask.id
+  })"></i>
+  <i class="fas fa-trash" data-action = "delete" onclick="deleteMicroTask(${
+    microtask.id
+  })"></i>
 </li>
     `;
   });
 }
+// function microTaskfunctionality(id) {
+//   //
+//   const UL = document.getElementById(id).nextElementSibling;
+//   if (!UL || UL.tagName !== "UL") {
+//     console.error("Invalid UL element");
+//     return;
+//   }
+//   UL.addEventListener("click", (event) => {
+//     event.stopPropagation();
+
+//     const target = event.target;
+//     const parent = target.parentElement;
+
+//     if (!parent.classList.contains("microTaskItem")) return;
+//     const microTaskId = parent.id;
+
+//     //actions
+//     const action = target.dataset.action;
+//     action === "delete" && deleteMicroTask(microTaskId);
+//     action === "check" && checkMicroTask(microTaskId);
+//     action === "edit" && editMicroTask(event, microTaskId);
+//   });
+// }
