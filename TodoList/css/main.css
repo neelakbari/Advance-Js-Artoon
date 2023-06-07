@@ -206,3 +206,7 @@ body {
   color: white;
   font-size: 2rem;
 }
+
+li.dragging {
+  background-color: blue !important;
+}

@@ -82,8 +82,6 @@ function renderSubTasks() {
     subTaskList.innerHTML += `
     <div
     class="microTaskContainer"
-    ondrop="drop(event)"
-    ondragover="allowDrop(event)"
     data-sub-task-id="${subtask.id}"
     >
     <h3 class="microTaskTitle" data-action = "edit" onclick="editSubTask(${subtask.id})">${subtask.value}</h3>
@@ -95,6 +93,7 @@ function renderSubTasks() {
     `;
     renderMicroTasks(subtask.id);
   });
+  dragfunction();
 }
 
 //Event Handlers of Subtasks
@@ -169,7 +168,7 @@ function renderMicroTasks(id) {
     microTaskList.innerHTML += `
     <li draggable="true" class="microTaskItem ${
       microtask.checked ? "done" : ""
-    }" ondragstart="drag(event)" id = ${microtask.id}>
+    }" id = ${microtask.id}>
     <h3>${microtask.value}</h3>
   <i class="far fa-check-circle" data-action = "check" onclick="checkMicroTask(${
     microtask.id
@@ -183,6 +182,7 @@ function renderMicroTasks(id) {
 </li>
     `;
   });
+  // dragfunction();
 }
 
 //Handlers of microTasks
@@ -272,3 +272,87 @@ function checkMicroTask(id) {
   localStorage.setItem("microTasks", JSON.stringify(microTasks));
   rerenderMicrotasks();
 }
+
+// const sortableLists = document.querySelectorAll(".microTaskList");
+// sortableLists.forEach((ul)=>{
+//   let li = Array.from(ul.children)
+//   li.forEach((res,index)=>{
+
+//     res.setAttribute('data-index',index)
+//     console.log(res)
+//   })
+// })
+// const listItems = [];
+// let dragstartIndex;
+// sortableLists.forEach((ul,index)=>{
+  
+// })
+  function dragfunction() {
+    const listitems = [];
+    let dragstartIndex;
+    createList();
+
+    //insert items into DOM
+    function createList(){
+      const sortableLists = document.querySelector('.microTaskList');
+      console.log(sortableLists)
+      Array.from(sortableLists.children).forEach((li,index)=>{
+        console.log(li)
+        li.classList.add("draggable");
+        li.setAttribute('data-index', index)
+        listitems.push(li)
+      })
+      addEventListeners();
+    }
+
+  function dragStart(){
+    dragstartIndex = +this.closest('li').getAttribute('data-index')
+    // console.log(dragstartIndex)
+  }
+  function dragOver(e){
+    e.preventDefault();
+    // console.log("dragover")
+  }
+  function dragDrop(){
+    // console.log("dragdrop")
+    const dragEndIndex = +this.getAttribute('data-index')
+    swapItems(dragstartIndex,dragEndIndex);
+    this.classList.remove("dragging")
+  }
+  function dragEnter(){
+    // console.log("dragenter")
+    this.classList.add("dragging")
+  }
+  function dragLeave(){
+    // console.log("dragleave")
+    this.classList.remove("dragging")
+  }
+  function swapItems(fromIndex,toIndex){
+    const itemOne = listitems[fromIndex]  
+    const itemTwo = listitems[toIndex]
+    console.log(itemOne,itemTwo)
+    listitems[fromIndex].appendChild(itemTwo);
+    listitems[toIndex].appendChild(itemOne);
+  }
+
+    function addEventListeners(){
+      const draggables = document.querySelectorAll('.draggable')
+      const dragListItems = document.querySelectorAll('.microTaskList li')
+      draggables.forEach((dragabble)=>{
+        dragabble.addEventListener('dragstart',dragStart);
+      })
+      dragListItems.forEach((item)=>{
+        item.addEventListener('dragover',dragOver);
+      })
+      dragListItems.forEach((item)=>{
+        item.addEventListener('drop',dragDrop);
+      })
+      dragListItems.forEach((item)=>{
+        item.addEventListener('dragenter',dragEnter);
+      })
+      dragListItems.forEach((item)=>{
+        item.addEventListener('dragleave',dragLeave);
+      })
+      console.log(draggables,dragListItems)
+    }
+  }
